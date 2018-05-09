@@ -1,0 +1,39 @@
+# A Package for Genetic Testing of Zero-Inflated Outcomes Using Set-based Kernel Regression Variance Component Score Tests
+#' Variance Component Tests for Genetic Data, Extending SNP-set (Sequence) Kernel Association Test (SKAT) to Zero-Inflated Outcomes.
+
+#'Functions for kernel-regression-based association tests for Zero-Inflated Outcomes. This includes aggregating single-SNP statistics to a SNP-set score statistic and providing p-values for both the zero and non-zero outcomes, as well as an omnibus (global) test of association.
+
+#' The method extends previous variance component tests to the Zero-Inflated outcome setting, using the approach described in Goodman et al. (2018).
+#' Options are available for ZIP, ZINB (beta) and Hurdle models.
+
+#' The \pkg{ZeroInflatedVCtest} package provides two main functions:
+#' First, \code{\link{ziVCtest_Null_Model}} extending \"SKAT_Null_Model\" (\pkg{SKAT})
+#' which provides code to specify the null model (under no genetic effect),
+#' possibly including different \"formula\" objects for the zero and non-zero outcomes.
+#' Second \code{\link{VCtest}} extending the function \"SKAT\" (\pkg{SKAT})
+#' to apply the null model in a test of a particular genetic marker set.
+
+# The illustrative examples in these functions include analysis of AIDS
+# latency data with age as a covariate, where the AIDS cases were retrospectively
+# ascertained at June 30, 1986, and only those who developed AIDS by that time were
+# included in the analysis (Kalbfeisch and Lawless, 1989).
+
+#' @references Goodman, M.O., Chibnik, L., Cai, T. Variance components genetic association test for zero-inflated count outcomes. 2018, \emph{Genetic Epidemiology}
+#' @references Lee, S., Emond, M.J., Bamshad, M.J., Barnes, K.C., Rieder, M.J., Nickerson, D.A., NHLBI GO Exome Sequencing Project-ESP Lung Project Team, Christiani, D.C., Wurfel, M.M. and Lin, X. (2012) Optimal unified approach for rare variant association testing with application to small sample case-control whole-exome sequencing studies. American Journal of Human Genetics, 91, 224-237.
+#' @references Lee, S., Wu, M. C., and Lin, X. (2012) Optimal tests for rare variant effects in sequencing association studies. Biostatistics, 13, 762-775.
+#' @references Wu, M. C.\\*, Lee, S.\\*, Cai, T., Li, Y., Boehnke, M., and Lin, X. (2011) Rare Variant Association Testing for Sequencing Data Using the Sequence Kernel Association Test (SKAT). American Journal of Human Genetics, 89, 82-93. \ * contributed equally.
+#' @references Wu, M. C., Kraft, P., Epstein, M. P.,Taylor, D., M., Chanock, S. J., Hunter, D., J., and Lin, X. (2010) Powerful SNP Set Analysis for Case-Control Genome-wide Association Studies. American Journal of Human Genetics, 86, 929-942.
+#' @references Davies R.B. (1980) Algorithm AS 155: The Distribution of a Linear Combination of chi-2 Random Variables, Journal of the Royal Statistical Society. Series C , 29, 323-333.
+#' @references H. Liu, Y. Tang, H.H. Zhang (2009) A new chi-square approximation to the distribution of non-negative definite quadratic forms in non-central normal variables, Computational Statistics and Data Analysis, 53, 853-856.
+#' @references Duchesne, P. and Lafaye De Micheaux, P. (2010) Computing the distribution of quadratic forms: Further comparisons between the Liu-Tang-Zhang approximation and exact methods, Computational Statistics and Data Analysis, 54, 858-862.
+
+#' @import SKAT
+#' @import pscl
+#' @import CompQuadForm
+#' @import EmpiricalBrownsMethod
+# #@importFrom stats pnorm qnorm quantile sd var
+# #@useDynLib ZeroInflatedVCtest, .registration = TRUE #only needed for compiled C code?
+#'
+#' @docType package
+#' @name ZeroInflatedVCtest
+NULL

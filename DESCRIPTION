@@ -1,11 +1,15 @@
 Package: ZeroInflatedVCtest
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Variance Component Tests for Genetic Data, Extending SNP-set (Sequence) Kernel Association Test (SKAT) to Zero-Inflated Outcomes.
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors@R: person("Goodman", "Matthew", email = "mattheworlando@gmail.com", role = c("aut", "cre"))
+Description: Functions for kernel-regression-based association tests for Zero-Inflated Outcomes. This includes aggregating single-SNP statistics to a SNP-set score statistic and providing p-values for both the zero and non-zero outcomes, as well as an omnibus (global) test of association.
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
+Imports: SKAT,
+    pscl
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 6.1.0

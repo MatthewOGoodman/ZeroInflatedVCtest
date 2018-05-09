@@ -1,0 +1,118 @@
+---
+title: "ZeroInflatedVCtest Vignette"
+author: "Matthew Goodman"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ZeroInflatedVCtest Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+#Generate Data
+
+```{r}
+library(ZeroInflatedVCtest)
+library(SKAT)
+library(pscl)
+
+# ZIP data Example
+
+# Existing data from SKAT package
+data(SKAT.example)
+names(SKAT.example)
+
+# genetic data
+G = SKAT.example$Z
+n = nrow(G)
+drivers = c(5,6,14,20,24) #set driver SNPs
+#cor(G[,c(5,6,14,20,24)])
+
+# Create new ZIP data:
+set.seed(12345)
+
+# effect size
+alpha.pi = 1.5
+alpha.ld = 1.3
+gamma.pi = c( 0.25, 0.75)
+gamma.ld = c( 0.75, 0.25)
+# genetic effects
+beta.pi =  c(0.5,1,1.5,2,2)
+beta.ld =  c(1.5,1,0.5,2,2) * 0.2
+
+#covariate linear predictor
+mu.pi = scale(SKAT.example$X, scale = FALSE) %*% gamma.pi
+mu.ld = scale(SKAT.example$X, scale = FALSE) %*% gamma.ld
+
+#genetic linear predictor
+damp.factor = 0.1
+nu.pi = damp.factor * scale(SKAT.example$Z[,drivers], scale = FALSE) %*% beta.pi
+nu.ld = damp.factor * scale(SKAT.example$Z[,drivers], scale = FALSE) %*% beta.ld
+
+#parameters under the alternative
+expit <- function(x) exp(x) / (1 + exp(x))
+logit <- function(p) log(p/(1-p))
+pi.alt =  expit( alpha.pi + mu.pi  + nu.pi )
+ld.alt =  exp(   alpha.ld + mu.ld  + nu.ld )
+
+#parameters under the null
+pi.null =  expit( alpha.pi + mu.pi )
+ld.null =  exp(   alpha.ld + mu.ld )
+
+y.zi = ifelse(rbinom(n, size = 1, prob = pi.alt ) == 0, 0, rpois(n, lambda = ld.alt ))
+y.nl = ifelse(rbinom(n, size = 1, prob = pi.null) == 0, 0, rpois(n, lambda = ld.null))
+
+hist(y.zi, breaks = seq(-1,500,1), xlim = c(-1,12) )
+cor(SKAT.example$Z[,drivers],cbind(ld.alt,pi.alt))
+
+hist(pi.alt); hist(ld.alt, breaks = -1:100, xlim = c(0,12))
+# plot(pi.alt, nu.pi); plot(ld.alt, nu.ld)
+cor(pi.alt, nu.pi); cor(ld.alt, nu.ld)
+sd(mu.pi); sd(nu.pi); sd(y.zi>0)
+sd(exp(mu.pi)); sd(exp(nu.pi)); sd(y.zi>0)
+sd(exp(mu.ld)); sd(exp(nu.ld)); sd(y.zi[y.zi>0])
+
+ZIP.data = list(Y.alt = y.zi, Y.null=y.nl, X = SKAT.example$X, G = SKAT.example$Z)
+
+```
+
+
+#Run Test
+
+```{R}
+# Zero-Inflated Variance Component Testing.
+# (n.b. "n.Resampling"" should be raised for greater precision)
+
+# Under the alternative
+null.mdl.obj.signal = ziVCtest_Null_Model(formula = Y.alt ~ X,
+                                          data = ZIP.data,
+                                          out_type="ZIP",
+                                          n.Resampling = 300,
+                                          type.Resampling = "perturbation",
+                                          wgtDstr.Resampling = "beta"
+)
+test.obj.signal = VCtest(G, null.mdl.obj.signal,
+                         kernel = "linear", method = "davies.precise")
+test.obj.signal$p.val.pi
+test.obj.signal$p.val.ld
+
+# Under the null
+null.mdl.obj.no.signal = ziVCtest_Null_Model(formula = Y.null ~ X,
+                                             data = ZIP.data,
+                                             out_type="ZIP",
+                                             n.Resampling = 300,
+                                             type.Resampling = "perturbation",
+                                             wgtDstr.Resampling = "beta"
+)
+test.obj.no.signal = VCtest(G, null.mdl.obj.no.signal,
+                            kernel = "linear", method = "davies.default")
+test.obj.no.signal$p.val.pi
+test.obj.no.signal$p.val.ld
+```
