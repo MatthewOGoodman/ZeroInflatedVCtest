@@ -137,7 +137,6 @@ ziKMTest.Poisson.Other = function(res, Z, X1, kernel, weights = NULL,
 
     # Combined p-values
     # Empirical Brown's method
-    library(EmpiricalBrownsMethod)
     # (this method uses correlation in these scores to adjust the scaled chisq constant)
     resid.pi.ld = cbind(res.pi,res.ld)
     Browns.result = empiricalBrownsMethod(data_matrix = t(resid.pi.ld),
